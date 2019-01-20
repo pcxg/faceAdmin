@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>人脸识别签到系统</title>
+    <!--bootstrap4.0-->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--dashboard.css-->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <!--font-awesome-->
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-datetimepicker.css" rel="stylesheet">
+
+    <!--表单验证-->
+    <link href="/static/css/bootstrapValidator.min.css" rel="stylesheet">
+    <!--图标-->
+    <link href="/static/css/glyphicon.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">人脸识别签到系统</a>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="{:url('Login/Index/logout')}">退出</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!--侧栏-->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">
+                  <span data-feather="home"></span>
+                  活动相关 <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <!--<li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file"></span>
+                  历史纪录
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shopping-cart"></span>
+                  Products
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="users"></span>
+                  Customers
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="bar-chart-2"></span>
+                  Reports
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="layers"></span>
+                  Integrations
+                </a>
+              </li>-->
+            </ul>
+
+            <!--<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Saved reports</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Current month
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Last quarter
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Social engagement
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Year-end sale
+                </a>
+              </li>
+            </ul>-->
+          </div>
+        </nav>
+        <!--主界面-->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <!--<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">-->
+            <!--<h1 class="h2">Dashboard</h1>-->
+            <!--<div class="btn-toolbar mb-2 mb-md-0">-->
+              <!--<div class="btn-group mr-2">-->
+                <!--<button class="btn btn-sm btn-outline-secondary">Share</button>-->
+                <!--<button class="btn btn-sm btn-outline-secondary">Export</button>-->
+              <!--</div>-->
+              <!--<button class="btn btn-sm btn-outline-secondary dropdown-toggle">-->
+                <!--<span data-feather="calendar"></span>-->
+                <!--This week-->
+              <!--</button>-->
+            <!--</div>-->
+          <!--</div>-->
+
+          <!--<canvas class="my-4" id="myChart" width="900" height="380"></canvas>-->
+
+          <h2>活动</h2>
+          <div class="table-responsive">
+            <span>
+              <button type="button" class="btn btn-primary" onclick="addNewAct()">添加活动</button>
+            </span>
+            <!--<span>
+              <span class="font-weight-bold">添加活动</span>
+              <a class="d-flex align-items-center text-muted"  href="javascript:void(0);" onclick="addNewAct()" >
+                <span data-feather="plus-circle"></span>
+              </a>
+            </span>-->
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>名称</th>
+                  <th>开始时间</th>
+                  <th>结束时间</th>
+                  <th>地点</th>
+                  <th>参与人数</th>
+                  <th>主办者</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {volist name="list" id="record"}
+                <tr>
+                  <td id="actId">
+                    {$record.id}
+                  </td>
+                  <td id="actName">
+                    {$record.name}
+                  </td>
+                  <td id="actStartTime">
+                    {$record.startTime}
+                  </td>
+                  <td id="actEndTime">
+                    {$record.endTime}
+                  </td>
+                  <td id="actLoc">
+                    {$record.location}
+                  </td>
+                  <td id="actListCnt">
+                    {$record.list_cnt}
+                  </td>
+                  <td id="actMaster">
+                    {$record.master}
+                  </td>
+                  <td id="actDetail" style="display: none">
+                    {$record.detail}
+                  </td>
+                  <td>
+                    <button id="modifyBtn_{$record.id}" type="button" class="btn btn-outline-info btn-sm" onclick="startModify(this.id)">修改
+                    </button>
+                    <button id="deleteBtn_{$record.id}" type="button" class="btn btn-outline-danger btn-sm" onclick="deleteAct(this.id)">删除
+                    </button>
+                  </td>
+                </tr>
+                {/volist}
+              </tbody>
+            </table>
+            {$page}
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!--模态框-->
+    <!-- 增加新活动-->
+    <div class="modal fade" id="addNewActModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width: auto; margin:0px auto;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">添加活动</h4>
+          </div>
+          <div class="modal-body">
+            <form enctype="multipart/form-data" method="post" id="addForm">
+              <!--活动名称-->
+              <div class="form-group row">
+                <label for="inputName" class="col-sm-3 col-form-label">活动名称</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="inputName" name="actName" placeholder="活动名称">
+                </div>
+              </div>
+              <!--开始时间-->
+              <div class="form-group row">
+                <label for="inputStartTime" class="col-sm-3 col-form-label">开始时间</label>
+                <div class="col-sm-9">
+                  <input class="form-control" size="16" type="text" id="inputStartTime" name="startTime" value="" readonly>
+                </div>
+              </div>
+              <!--结束时间-->
+              <div class="form-group row">
+                <label for="inputEndTime" class="col-sm-3 col-form-label">结束时间</label>
+                <div class="col-sm-9">
+                  <input class="form-control" size="16" type="text" id="inputEndTime" name="endTime" value="" readonly>
+                </div>
+              </div>
+              <!--活动地点-->
+              <div class="form-group row">
+                <label for="inputAddress" class="col-sm-3 col-form-label">活动地点</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="inputAddress" name="actAddress" placeholder="活动地点">
+                </div>
+              </div>
+
+              <!--详情-->
+              <div class="form-group row">
+                <label for="inputDetail" class="col-sm-3 col-form-label">详情</label>
+                <div class="col-sm-9">
+                  <textarea class="form-control" id="inputDetail" cols="20" rows="3" name="actDetail" placeholder="详情"></textarea>
+                </div>
+              </div>
+
+              <!--发起人-->
+              <div class="form-group row">
+                <label for="inputMaster" class="col-sm-3 col-form-label">组织者</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="inputMaster" name="actMaster" placeholder="组织者">
+                </div>
+              </div>
+
+              <!--名单-->
+              <div class="form-group">
+                <label for="listFile">参与者名单</label>
+                <input type="file" class="form-control-file" id="listFile" name="listFile">
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button id="addActSubmit" type="button" class="btn btn-primary">确定</button>
+            <button id="addActCancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!-- 修改活动信息-->
+    <div class="modal fade" id="modifyActModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel2" aria-hidden="true">
+      <div class="modal-dialog" style="width: auto; margin:0px auto;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel2">修改活动信息</h4>
+          </div>
+          <div class="modal-body">
+            <form action="#" enctype="multipart/form-data" method="post" id="modifyForm">
+              <!--id-->
+              <div class="form-group row" style="display: none;">
+                <input type="text" name="actId" id="modifiedId" hidden>
+              </div>
+              <!--活动名称-->
+              <div class="form-group row">
+                <label for="modifyName" class="col-sm-3 col-form-label">活动名称</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="modifyName" name="actName" placeholder="活动名称">
+                </div>
+              </div>
+              <!--开始时间-->
+              <div class="form-group row">
+                <label for="modifyStartTime" class="col-sm-3 col-form-label">开始时间</label>
+                <div class="col-sm-9">
+                  <input class="form-control" size="16" type="text" id="modifyStartTime" name="startTime" value="" readonly>
+                </div>
+              </div>
+              <!--结束时间-->
+              <div class="form-group row">
+                <label for="modifyEndTime" class="col-sm-3 col-form-label">结束时间</label>
+                <div class="col-sm-9">
+                  <input class="form-control" size="16" type="text" id="modifyEndTime" name="endTime" value="" readonly>
+                </div>
+              </div>
+              <!--活动地点-->
+              <div class="form-group row">
+                <label for="modifyAddress" class="col-sm-3 col-form-label">活动地点</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="modifyAddress" name="actAddress" placeholder="活动地点">
+                </div>
+              </div>
+
+              <!--详情-->
+              <div class="form-group row">
+                <label for="modifyDetail" class="col-sm-3 col-form-label">详情</label>
+                <div class="col-sm-9">
+                  <textarea class="form-control" cols="20" rows="3" id="modifyDetail" name="actDetail" placeholder="详情"></textarea>
+                </div>
+              </div>
+
+              <!--发起人-->
+              <div class="form-group row">
+                <label for="modifyMaster" class="col-sm-3 col-form-label">组织者</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="modifyMaster" name="actMaster" placeholder="组织者">
+                </div>
+              </div>
+
+              <!--名单-->
+              <div class="form-group">
+                <label for="modifyListFile">参与者名单</label>
+                <input type="file" class="form-control-file" id="modifyListFile" name="listFile">
+              </div>
+            </form>
+          </div>
+
+
+          <div class="modal-footer">
+            <button id="modifyActSubmit" type="button" class="btn btn-primary">确定</button>
+            <button id="modifyActCancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!--删除活动信息--->
+    <div class="modal fade" id="deleteActModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel3" aria-hidden="true">
+      <div class="modal-dialog" style="width: auto; margin:0px auto;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel3">删除活动</h4>
+          </div>
+          <div id="hintMessage" class="modal-body">
+            <h5></h5>
+            <input type="text" id="deleteId" hidden>
+          </div>
+
+
+          <div class="modal-footer">
+            <button id="deleteActSubmit" type="button" class="btn btn-primary">确定</button>
+            <button id="deleteActCancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <!--jquery-->
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <!--bootstrap-->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/popper.min.js"></script>
+    <!--时间选择器-->
+    <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/static/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+    <!--表单验证-->
+    <script src="/static/js/bootstrapValidator.min.js"></script>
+
+    <!--moment.js-->
+    <script src="/static/js/moment.min.js"></script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+
+
+
+    <script>
+      feather.replace()
+    </script>
+
+    <!--模态框处理函数-->
+    <script type="text/javascript">
+      //验证表单
+      $(document).ready(function () {
+          validateForm('addForm');
+          validateForm('modifyForm');
+      });
+      //根据name对表单添加验证条件
+      function validateForm(formId) {
+          $("#"+formId).bootstrapValidator({
+
+              message: 'This value is not valid',
+              feedbackIcons: {
+                  valid: 'glyphicon glyphicon-ok',
+                  invalid: 'glyphicon glyphicon-remove',
+                  validating: 'glyphicon glyphicon-refresh'
+              },
+              fields: {
+                  actName: {
+                      message: '验证失败',
+                      validators: {
+                          notEmpty: {
+                              message: '活动名不能为空'
+                          }
+                      }
+                  },
+                  startTime:{
+                      message: '验证失败',
+                      validators: {
+                          notEmpty: {
+                              message: '开始时间不能为空'
+                          }
+                      }
+                  },
+                  endTime:{
+                      message: '验证失败',
+                      validators: {
+                          notEmpty: {
+                              message: '结束时间不能为空'
+                          }
+                      }
+                  },
+                  actAddress:{
+                      message: '验证失败',
+                      validators: {
+                          notEmpty: {
+                              message: '活动地点不能为空'
+                          }
+                      }
+                  },
+                  actMaster:{
+                      message: '验证失败',
+                      validators: {
+                          notEmpty: {
+                              message: '主办者不能为空'
+                          }
+                      }
+                  }
+
+              }
+          });
+      }
+
+      //两个时间选择器联动
+      function initDateTimePicker(startTime, endTime, timeFormat) {
+          var date = moment().format("yyyy-mm-dd");
+          $(startTime).datetimepicker("remove");
+          $(startTime).datetimepicker({
+              language: 'zh-CN',
+              autoclose: true,
+              startDate:new Date(),
+              format: timeFormat,
+              /*
+              todayHighlight: true,
+              endDate: new Date(),
+              startView: minview,
+              minView: minview,*/
+          }).on("changeDate", function() {
+              var value = $(startTime).val();
+              $(endTime).datetimepicker("remove");
+              $(endTime).datetimepicker({
+                  language: 'zh-CN',
+                  autoclose: true,
+                  startDate: value,
+                  format: timeFormat,
+                  /*
+                  todayHighlight: true,
+                  endDate: new Date(),
+                  startView: minview,
+                  minView: minview,*/
+              })
+          });
+          $(endTime).datetimepicker("remove");
+          $(endTime).datetimepicker({
+              language: 'zh-CN',
+              autoclose: true,
+              startDate:new Date(),
+              format: timeFormat,
+              /*
+              todayHighlight: true,
+              endDate: new Date(),
+              startView: minview,
+              minView: minview,*/
+          }).on("changeDate", function() {
+              var value = $(endTime).val();
+              $(startTime).datetimepicker("remove");
+              $(startTime).datetimepicker({
+                  language: 'zh-CN',
+                  autoclose: true,
+                  startDate:new Date(),
+                  endDate: value,
+                  format: timeFormat,
+                  /*
+                  todayHighlight: true,
+                  startView: minview,
+                  minView: minview,*/
+              })
+          });
+      }
+      //显示添加新活动模态框
+      function addNewAct() {
+          $("#addNewActModal").modal(true,true,true,false);
+          initDateTimePicker("#inputStartTime","#inputEndTime","yyyy-mm-dd hh:ii");
+      }
+
+      //添加新活动
+      $("#addActSubmit").click(function () {
+          var formData = new FormData(document.getElementById("addForm"));
+          $("#addForm").bootstrapValidator("addField","listFile",
+              {
+                  message: '验证失败',
+                  validators: {
+                      notEmpty: {
+                          message: '名单还未上传'
+                      },file: {
+                          extension: 'xls,xlsx,csv',
+                          message: '请重新选择文件'
+                      }
+                  }
+              });
+          var validator = $("#addForm").data('bootstrapValidator');
+          validator.validate();
+          if (validator.isValid()){
+              $.ajax({
+                  url:"{:url('Index/addActivity')}",
+                  type:"POST",
+                  dataType:"json",
+                  async:false,
+                  data:formData,
+                  processData : false,
+                  // 告诉jQuery不要去设置Content-Type请求头
+                  contentType : false,
+                  success:function(data){
+                      if(data.Code===200){
+                          window.location.reload();
+                          alert("添加成功");
+                      }
+                      else{
+                          alert("添加失败");
+                      }
+                      validator.resetForm(true);
+                  },
+                  error:function (msg) {
+                  }
+
+              });
+
+          }
+
+      });
+      //取消后重置验证状态
+      $("#addActCancel").click(function () {
+          $("#addForm").data('bootstrapValidator').resetForm(true);
+      });
+      //修改活动记录
+      function startModify(id){
+          var tr = $("#"+id).parents("tr");
+
+          var master = tr.find("#actMaster").text().trim();
+          var name = tr.find("#actName").text().trim();
+          var startTime = tr.find("#actStartTime").text().trim();
+          var endTime = tr.find("#actEndTime").text().trim();
+          var loc = tr.find("#actLoc").text().trim();
+          var detail = tr.find("#actDetail").text().trim();
+
+          var mid = parseInt(id.substring(id.indexOf('_')+1,id.length));
+          $("#modifyActModal").modal(true,true,true,false);
+
+          initDateTimePicker("#modifyStartTime","#modifyEndTime","yyyy-mm-dd hh:ii");
+          $("#modifyMaster").val(master);
+          $("#modifyName").val(name);
+          $("#modifyDetail").val(detail);
+          $("#modifyStartTime").val(startTime);
+          $("#modifyEndTime").val(endTime);
+          $("#modifyStartTime").datetimepicker('update');
+          $("#modifyEndTime").datetimepicker('update');
+          $("#modifyAddress").val(loc);
+
+          $("#modifiedId").val(mid);
+      }
+      //提交修改
+      $("#modifyActSubmit").click(function () {
+          var formData = new FormData(document.getElementById("modifyForm"));
+          //验证规则
+          $("#modifyForm").bootstrapValidator("addField","listFile",
+              {
+                  message: '验证失败',
+                  validators: {
+                      file: {
+                          extension: 'xls,xlsx,csv',
+                          message: '请重新选择文件'
+                      }
+                  }
+              });
+
+          var validator = $("#modifyForm").data('bootstrapValidator');
+          validator.validate();
+          if (validator.isValid()){
+              $.ajax({
+                  url:"{:url('Index/modifyActivity')}",
+                  type:"POST",
+                  dataType:"json",
+                  async:false,
+                  data:formData,
+                  processData : false,
+                  // 告诉jQuery不要去设置Content-Type请求头
+                  contentType : false,
+                  success:function(data){
+                      if(data.Code===200){
+                          window.location.reload();
+                          alert("修改成功");
+                      }
+                      else{
+                          alert("修改失败");
+                      }
+                      validator.resetForm(true);
+                  },
+                  error:function (msg) {
+                  }
+
+              });
+
+          }
+
+      });
+      //刷新验证规则
+      $("#modifyActCancel").click(function () {
+          $("#modifyForm").data('bootstrapValidator').resetForm(true);
+      });
+
+      //删除活动记录
+      function deleteAct(id) {
+          var mid = parseInt(id.substring(id.indexOf('_')+1,id.length));
+          var name = $("#"+id).parents("tr").find("#actName").text().trim();
+
+          $("#deleteActModal").modal(true,true,true,false);
+
+          $("#hintMessage >h5").html("确定删除活动："+name+"吗？");
+          $("#deleteId").val(mid);
+      }
+
+      //传送要删除活动的id值
+      $("#deleteActSubmit").click(function () {
+          var jdata = {'id':$("#deleteId").val()};
+          $.ajax({
+              url:"{:url('Index/deleteActivity')}",
+              type:"POST",
+              dataType:"json",
+              data:jdata,
+              success:function(data){
+                  if(data.Code===200){
+                      alert("删除成功！");
+                      window.location.reload();
+                  }
+              },
+              error:function (msg) {
+
+              }
+
+          });
+      });
+    </script>
+
+  </body>
+</html>
